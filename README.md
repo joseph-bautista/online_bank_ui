@@ -1,3 +1,11 @@
+# Simple Online Bank System (Frontend System)
+This is a simple online banking system written in JavaScript using ReactJS Framework. I also written the backend that this frontend system uses that you can also clone. This is the link to the repository of the backend https://github.com/joseph-bautista/online_bank
+
+** Please also note that we need to set up backend sytem of this to use this frontend system smoother **
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
