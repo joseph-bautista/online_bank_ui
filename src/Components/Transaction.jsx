@@ -1,10 +1,8 @@
-// Import required libraries and components
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const Transaction = () => {
@@ -26,20 +24,15 @@ const Transaction = () => {
                   }
               })
               .then((response) => {
-                  // Handle successful login, e.g., store token in localStorage
-                  // setBalance(response.data.data.account.balance);
-                  // navigate('/');
                   setTransactions(response.data.data.transactions)
               })
               .catch((error) => {
                   navigate('/')
-                  // Handle login error
                   console.error(error);
               });
         } catch (error) {
           console.error(error);
           navigate('/');
-          // Show error alert
         }
       };
   

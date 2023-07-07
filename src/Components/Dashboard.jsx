@@ -1,10 +1,8 @@
-// Import required libraries and components
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Link, Outlet, redirect, Routes, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Container, Col, Row} from 'react-bootstrap';
 
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const Dashboard = () => {
@@ -26,17 +24,12 @@ const Dashboard = () => {
             }
            })
           .then((response) => {
-            // Handle successful login, e.g., store token in localStorage
             setBalance(response.data.data.account.balance);
           })
           .catch((error) => {
             navigate('/login')
-            // Handle login error
             console.error(error);
           });
-          
-  
-          
         } catch (error) {
           console.error(error);
         }
@@ -47,13 +40,10 @@ const Dashboard = () => {
   
     const handleSendToUser = () => {
       navigate('/send-to-user');
-  
-      // return redirect('/send-to-user');
     };
   
     const handleSendToBank = () => {
       navigate('/send-to-bank');
-      // return redirect('/send-to-bank');
     };
   
     return (

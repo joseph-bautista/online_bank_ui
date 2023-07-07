@@ -1,4 +1,3 @@
-// Import required libraries and components
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,15 +7,14 @@ const API_URL = 'http://localhost:8000';
 
 const Navigation = () => {
     const [token, setToken] = useState('');
-    const navigate = useNavigate(); // Define the navigate function
+    const navigate = useNavigate(); 
     useEffect(()=>{
         let localStorageData = JSON.parse(localStorage.getItem('authData'));
         if(localStorageData){
             setToken(localStorageData.data.token);
         }
     });
-
-  // Logout function
+    
     const handleLogout = async () => {
         try {
             await axios.get(`${API_URL}/api/v1/account_details`, { 

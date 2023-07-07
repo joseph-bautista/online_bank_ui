@@ -1,10 +1,8 @@
-// Import required libraries and components
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Modal, Container, Col, Row, Form } from 'react-bootstrap';
 
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const SendToBank = () => {
@@ -73,25 +71,18 @@ const SendToBank = () => {
             }
         })
         .then((response) => {
-            // console.log(response.data.data.providers)
             let providers = response.data.data.providers;
-            
             setProviderList(providers);
-
         })
         .catch((error) => {
             console.error(error);
         });
-           
       } catch (error) {
         console.error(error);
       }
-
-      
     };
   
     const handleSendMoney = async () => {
-  
       try {
         await axios.post(`${API_URL}/api/v1/transactions`,  
             { 
@@ -106,24 +97,15 @@ const SendToBank = () => {
                 }
             })
             .then((response) => {
-                // Handle successful login, e.g., store token in localStorage
-                // setBalance(response.data.data.account.balance);
                 navigate('/');
+                alert('Transaction successful');
             })
             .catch((error) => {
                 navigate('/')
-                // Handle login error
                 console.error(error);
             });
-            // Show success alert
-            alert('Transaction successful');
-            // Redirect to dashboard page
-            // navigate('/')
-  
-        // return redirect('/');
       } catch (error) {
         console.error(error);
-        // Show error alert
         alert('Transaction failed');
       }
     };
@@ -138,8 +120,6 @@ const SendToBank = () => {
     };
 
     const handleModalShow = () => {
-      // console.log(providerList);
-      // setShowModal(true);
       if(providerId === ''){
           setShowProviderError(true);
       }else{

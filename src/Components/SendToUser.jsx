@@ -1,10 +1,8 @@
-// Import required libraries and components
 import React, { useState, useEffect } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Modal, Container, Col, Row, Form } from 'react-bootstrap';
 
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const SendToUser = () => {
@@ -29,33 +27,22 @@ const SendToUser = () => {
     });
   
     const handleSendMoney = async () => {
-  
       try {
-
         await axios.post(`${API_URL}/api/v1/transactions`, {type:'user',email, amount}, { 
             headers: {
               Authorization: `Bearer ${token}`,
             }
            })
           .then((response) => {
-            // Handle successful login, e.g., store token in localStorage
-            // setBalance(response.data.data.account.balance);
             navigate('/');
+            alert('Transaction successful');
           })
           .catch((error) => {
             navigate('/')
-            // Handle login error
             console.error(error);
           });
-        // Show success alert
-        alert('Transaction successful');
-        // Redirect to dashboard page
-        // navigate('/');
-  
-        // return redirect('/');
       } catch (error) {
         console.error(error);
-        // Show error alert
         alert('Transaction failed');
       }
     };
@@ -83,7 +70,6 @@ const SendToUser = () => {
         if (email !== '' && amount !== ''){
             setShowModal(true);
         }
-        
     }
 
     const handleCancel = () =>{

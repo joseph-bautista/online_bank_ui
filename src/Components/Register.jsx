@@ -1,10 +1,7 @@
-// Import required libraries and components
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Container, Row, Col, Form } from 'react-bootstrap';
-
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const Register = () => {
@@ -19,16 +16,11 @@ const Register = () => {
       e.preventDefault();
   
       try {
-        // Redirect to login page after successful registration
-        // navigate('/login');
         await axios.post(`${API_URL}/api/v1/auth/register`, { name, email, password, password_confirmation: confirmPassword, mobile })
         .then((response) => {
-          // Handle successful login, e.g., store token in localStorage
-          
           navigate('/login');
         })
         .catch((error) => {
-          // Handle login error
           console.error(error);
         });
   

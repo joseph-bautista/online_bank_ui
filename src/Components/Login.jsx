@@ -1,32 +1,24 @@
-// Import required libraries and components
 import React, { useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Container, Col, Row, Form } from 'react-bootstrap';
 
-// Define API base URL
 const API_URL = 'http://localhost:8000';
 
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const [token, setToken] = useState('');
-  
     const handleLogin = async (e) => {
       e.preventDefault();
-  
       try {
         await axios.post(`${API_URL}/api/v1/auth/login`, { email, password })
         .then((response) => {
-          // Handle successful login, e.g., store token in localStorage
-          
           localStorage.setItem('authData', JSON.stringify(response.data));
           console.log(response.data);
           navigate('/');
         })
         .catch((error) => {
-          // Handle login error
           console.error(error);
         });
   
