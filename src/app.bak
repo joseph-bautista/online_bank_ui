@@ -1,0 +1,425 @@
+// Import required libraries and components
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Link, Outlet, redirect, Routes, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Button, Modal, Nav, Navbar } from 'react-bootstrap';
+
+// Define API base URL
+const API_URL = 'http://localhost:8000';
+
+// Login Page
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // const [token, setToken] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(`${API_URL}/api/v1/auth/login`, { email, password })
+      .then((response) => {
+        // Handle successful login, e.g., store token in localStorage
+        
+        localStorage.setItem('authData', JSON.stringify(response.data));
+        console.log(response.data);
+        navigate('/');
+      })
+      .catch((error) => {
+        // Handle login error
+        console.error(error);
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Login Page</h2>
+      <form onSubmit={handleLogin}>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  );
+};
+
+// Registration Page
+const RegistrationPage = () => {
+  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [mobile, setMobile] = useState('');
+
+  const handleRegistration = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Redirect to login page after successful registration
+      // navigate('/login');
+      await axios.post(`${API_URL}/api/v1/auth/register`, { name, email, password, password_confirmation: passwordConfirmation, mobile })
+      .then((response) => {
+        // Handle successful login, e.g., store token in localStorage
+        
+        navigate('/login');
+      })
+      .catch((error) => {
+        // Handle login error
+        console.error(error);
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Registration Page</h2>
+      <form onSubmit={handleRegistration}>
+        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={passwordConfirmation}
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
+          required
+        />
+        <input type="text" placeholder="Mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} />
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  );
+};
+
+// Dashboard Page
+const DashboardPage = () => {
+  const navigate = useNavigate();
+  const [balance, setBalance] = useState('');
+  
+  useEffect(() => {
+    let localStorageData = JSON.parse(localStorage.getItem('authData'));
+    console.log(localStorageData);
+
+    let token = '';
+    if(localStorageData){
+      token = localStorageData.data.token;
+    }
+    
+    const fetchAccountBalance = async () => {
+      try {
+        
+
+        await axios.get(`${API_URL}/api/v1/account_details`, { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+         })
+        .then((response) => {
+          // Handle successful login, e.g., store token in localStorage
+          setBalance(response.data.data.account.balance);
+        })
+        .catch((error) => {
+          navigate('/login')
+          // Handle login error
+          console.error(error);
+        });
+        
+
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchAccountBalance();
+  }, []);
+
+  const handleSendToUser = () => {
+    navigate('/send-to-user');
+
+    // return redirect('/send-to-user');
+  };
+
+  const handleSendToBank = () => {
+    navigate('/send-to-bank');
+
+    // return redirect('/send-to-bank');
+  };
+
+  return (
+    <div>
+      <h2>Dashboard Page</h2>
+      <p>Account Balance: {balance}</p>
+      <Button onClick={handleSendToUser}>
+        Send Money to User
+      </Button>
+      <Button onClick={handleSendToBank}>
+        Send Money to Bank
+      </Button>
+      <Outlet />
+    </div>
+  );
+};
+
+// Send Money to User Page
+const SendToUserPage = ({ token }) => {
+  // const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [amount, setAmount] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSendMoney = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        `${API_URL}/api/v1/transactions`,
+        { email, amount, type: 'user' },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Show success alert
+      alert('Transaction successful');
+      // Redirect to dashboard page
+      // navigate('/');
+
+      return redirect('/');
+    } catch (error) {
+      console.error(error);
+      // Show error alert
+      alert('Transaction failed');
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalProceed = () => {
+    setShowModal(false);
+    handleSendMoney();
+  };
+
+  return (
+    <div>
+      <h2>Send Money to User Page</h2>
+      <form onSubmit={() => setShowModal(true)}>
+        <input type="email" placeholder="Receiver's Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+        <button type="submit">Send</button>
+        <Button as={Link} to="/" variant="secondary">
+          Cancel
+        </Button>
+      </form>
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You are about to send {amount} to {email}. Do you want to continue?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalProceed}>
+            Proceed
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+// Send Money to Bank Page
+const SendToBankPage = ({ token }) => {
+  // const navigate = useNavigate();
+  const [provider, setProvider] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [amount, setAmount] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSendMoney = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        `${API_URL}/api/v1/transactions`,
+        { provider, bank_name: bankName, account_number: accountNumber, amount, type: 'bank' },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+     );
+      // Show success alert
+      alert('Transaction successful');
+      // Redirect to dashboard page
+      // navigate('/');
+
+      return redirect('/');
+    } catch (error) {
+      console.error(error);
+      // Show error alert
+      alert('Transaction failed');
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalProceed = () => {
+    setShowModal(false);
+    handleSendMoney();
+  };
+
+  return (
+    <div>
+      <h2>Send Money to Bank Page</h2>
+      <form onSubmit={() => setShowModal(true)}>
+        <select value={provider} onChange={(e) => setProvider(e.target.value)} required>
+          <option value="">Select Provider</option>
+          <option value="Provider 1">Provider 1</option>
+          <option value="Provider 2">Provider 2</option>
+          {/* Add more options as needed */}
+        </select>
+        <input type="text" placeholder="Bank Name" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
+        <input type="text" placeholder="Account Number" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required />
+        <input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+        <button type="submit">Send</button>
+        <Button as={Link} to="/" variant="secondary">
+          Cancel
+        </Button>
+      </form>
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You are about to send {amount} to a {bankName} with account number {accountNumber} and provider {provider}. Do you want to continue?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalProceed}>
+            Proceed
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+// Transaction Page
+const TransactionPage = ({ token }) => {
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/v1/transactions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { data } = response.data;
+
+        setTransactions(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchTransactions();
+  }, [token]);
+
+  return (
+    <div>
+      <h2>Transaction Page</h2>
+      <ul>
+        {transactions.map((transaction) => (
+          <li key={transaction.id}>
+            {transaction.amount} - {transaction.type}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// App Component
+const App = () => {
+  const [token, setToken] = useState('');
+  // const navigate = useNavigate(); // Define the navigate function
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${API_URL}/api/v1/auth/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setToken('');
+      // Redirect to login page after successful logout
+      // navigate('/login');
+
+      return redirect('/login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <Router>
+      <Navbar bg="light" expand="lg">
+        <Navbar.Brand as={Link} to="/">
+          Home
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link as={Link} to="/transactions">
+              Transactions
+            </Nav.Link>
+          </Nav>
+          {token && (
+            <Button variant="outline-primary" onClick={handleLogout}>
+              Logout
+            </Button>
+          )}
+        </Navbar.Collapse>
+      </Navbar>
+      <Outlet />
+      <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegistrationPage token={token} />} />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/transactions" element={<TransactionPage token={token} />} />
+          <Route path="/send-to-user" element={<SendToUserPage token={token} />} />
+          <Route path="/send-to-bank" element={<SendToBankPage token={token} />} />
+        </Routes>
+    </Router>
+  );
+};
+
+export default App;

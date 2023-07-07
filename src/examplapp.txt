@@ -1,0 +1,56 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import LoginForm from './Components/LoginForm';
+import RegisterForm from './Components/RegisterForm';
+import Home from './Components/Home';
+import Transaction from './Components/Transaction';
+import SendToBank from './Components/SendToBank';
+import SendToUser from './Components/SendToUser';
+
+import './App.css';
+
+
+
+const App = () => {
+  const isAuthenticated = false;
+
+  const handleLogout = () => {
+    // Handle logout logic here
+    // navigate("/login");
+  };
+  return (
+    <Router>
+      
+        <nav>
+          <ul>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/register">Register</Link>
+            </li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            {isAuthenticated && (
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            )}
+          </ul>
+        </nav>
+      <div className='container'>
+        <Routes>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/transaction" element={<Transaction />} />
+          <Route path="/send-to-user" element={<SendToUser />} />
+          <Route path="/send-to-bank" element={<SendToBank />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;

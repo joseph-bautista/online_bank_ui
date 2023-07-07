@@ -1,5 +1,43 @@
+.container{
+  align-items: center;
+}
+
+#navigation * {
+  background-color: #d5bdaf;
+}
+
+.errorMsg {
+  color: red;
+}
+
+#transaction-list{
+  text-align: left;
+}
+
+.transaction-item{
+  border: 1px solid black;
+  padding-top: 20px;
+}
+
+.auth-container{
+  margin: 50px auto;
+  text-align: center;
+  max-width: 50%;
+  border: 1px solid;
+  padding: 25px;
+  border-radius: 50px;
+}
+
+.row{
+  margin-bottom: 20px;
+}
+
 .App {
   text-align: center;
+}
+
+* {
+  background-color: #d6ccc2;
 }
 
 .App-logo {
